@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="LOGO.png" alt="Anbernic Dashboard" width="200">
+</p>
+
 # 🎮 Anbernic RG405V — Web Dashboard
 
 Веб-панель мониторинга и управления Anbernic RG405V через Termux.  
