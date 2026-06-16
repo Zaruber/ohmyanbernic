@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANBERNIC — Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* ═══ RESET ═══ */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg-deep:    #1E1E1E;
+            --bg-card:    #282828;
+            --bg-hover:   #303030;
+            --accent:     #2C3F2F;
+            --accent-lit: #CDF7D5;
+            --text:       #E0E0E0;
+            --text-dim:   #808080;
+            --text-dark:  #505050;
+            --danger:     #FF4444;
+            --danger-bg:  #3F2C2C;
+            --mono:       'JetBrains Mono', monospace;
+        }
+
+        html { font-size: 14px; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ═══ LAYOUT ═══ */
+        .app {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 32px 20px;
+        }
+
+        /* ═══ HEADER ═══ */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .header__left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header__logo {
+            width: 36px;
+            height: 36px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .header__title {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent-lit);
+        }
+
+        .header__status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent-lit);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .header__dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-lit);
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* ═══ NAV TABS ═══ */
+        .nav {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 24px;
+            background: var(--bg-card);
+        }
+
+        .nav__tab {
+            flex: 1;
+            padding: 12px 0;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .nav__tab:hover {
+            color: var(--text);
+            background: var(--bg-hover);
+        }
+
+        .nav__tab--active {
+            color: var(--accent-lit);
+            background: var(--accent);
+        }
+
+        /* ═══ TAB CONTENT ═══ */
+        .tab-content { display: none; }
+        .tab-content--active { display: block; }
+
+        /* ═══ CARDS ═══ */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2px;
+        }
+
+        .grid--full {
+            grid-template-columns: 1fr;
+        }
+
+        @media (max-width: 600px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--bg-card);
+            padding: 20px;
+            position: relative;
+        }
+
+        .card--wide {
+            grid-column: 1 / -1;
+        }
+
+        .card__label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            margin-bottom: 12px;
+        }
+
+        .card__value {
+            font-family: var(--mono);
+            font-size: 28px;
+            font-weight: 500;
+            color: var(--accent-lit);
+        }
+
+        .card__sub {
+            font-family: var(--mono);
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-top: 6px;
+        }
+
+        /* ═══ PROGRESS BAR ═══ */
+        .bar {
+            width: 100%;
+            height: 3px;
+            background: var(--bg-deep);
+            margin-top: 14px;
+        }
+
+        .bar__fill {
+            height: 100%;
+            background: var(--accent-lit);
+            transition: width 0.6s ease;
+        }
+
+        /* ═══ NETWORK INFO ROW ═══ */
+        .info-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2px;
+            margin-top: 2px;
+        }
+
+        @media (max-width: 600px) {
+            .info-row { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .info-cell {
+            background: var(--bg-card);
+            padding: 16px 20px;
+        }
+
+        .info-cell__label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+
+        .info-cell__value {
+            font-family: var(--mono);
+            font-size: 13px;
+            color: var(--text);
+        }
+
+        /* ═══ FILE MANAGER ═══ */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 14px 20px;
+            background: var(--bg-card);
+            margin-bottom: 2px;
+            font-family: var(--mono);
+            font-size: 12px;
+            flex-wrap: wrap;
+        }
+
+        .breadcrumb__item {
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: color 0.15s;
+            background: none;
+            border: none;
+            font-family: var(--mono);
+            font-size: 12px;
+        }
+
+        .breadcrumb__item:hover { color: var(--accent-lit); }
+        .breadcrumb__item--active { color: var(--accent-lit); cursor: default; }
+        .breadcrumb__sep { color: var(--text-dark); }
+
+        .file-actions {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 2px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn--accent {
+            background: var(--accent);
+            color: var(--accent-lit);
+        }
+
+        .btn--accent:hover {
+            background: #3a5a3f;
+        }
+
+        .btn--danger {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        .btn--danger:hover {
+            background: #4a2c2c;
+        }
+
+        .btn--ghost {
+            background: var(--bg-card);
+            color: var(--text-dim);
+        }
+
+        .btn--ghost:hover {
+            background: var(--bg-hover);
+            color: var(--text);
+        }
+
+        .file-list {
+            background: var(--bg-card);
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background 0.1s;
+            border-bottom: 1px solid var(--bg-deep);
+            gap: 12px;
+        }
+
+        .file-item:last-child { border-bottom: none; }
+        .file-item:hover { background: var(--bg-hover); }
+
+        .file-item__icon {
+            font-size: 14px;
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .file-item__name {
+            flex: 1;
+            font-size: 13px;
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .file-item__name--dir { color: var(--accent-lit); }
+
+        .file-item__size {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--text-dark);
+            flex-shrink: 0;
+        }
+
+        .file-item__date {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--text-dark);
+            flex-shrink: 0;
+            width: 80px;
+        }
+
+        .file-item__del {
+            background: none;
+            border: none;
+            color: var(--text-dark);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px 8px;
+            transition: color 0.15s;
+            flex-shrink: 0;
+        }
+
+        .file-item__del:hover { color: var(--danger); }
+
+        /* File viewer */
+        .file-viewer {
+            display: none;
+        }
+
+        .file-viewer--active {
+            display: block;
+        }
+
+        .file-viewer__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            background: var(--accent);
+        }
+
+        .file-viewer__name {
+            font-family: var(--mono);
+            font-size: 12px;
+            color: var(--accent-lit);
+        }
+
+        .file-viewer__close {
+            background: none;
+            border: none;
+            color: var(--accent-lit);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0 4px;
+            font-family: var(--mono);
+        }
+
+        .file-viewer__content {
+            padding: 16px 20px;
+            background: var(--bg-deep);
+            font-family: var(--mono);
+            font-size: 12px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 500px;
+            overflow-y: auto;
+            color: var(--text);
+            border: 1px solid var(--bg-card);
+        }
+
+        /* Upload area */
+        .upload-area {
+            padding: 24px;
+            background: var(--bg-card);
+            border: 2px dashed var(--text-dark);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            margin-top: 2px;
+            display: none;
+        }
+
+        .upload-area--active { display: block; }
+
+        .upload-area:hover {
+            border-color: var(--accent-lit);
+            background: var(--bg-hover);
+        }
+
+        .upload-area__text {
+            font-size: 12px;
+            color: var(--text-dim);
+            font-weight: 600;
+        }
+
+        .upload-area__input { display: none; }
+
+        /* ═══ SCRIPTS / PROCESSES ═══ */
+        .section-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dark);
+            padding: 16px 20px 10px;
+            background: var(--bg-deep);
+        }
+
+        .proc-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-card);
+        }
+
+        .proc-table th {
+            text-align: left;
+            padding: 10px 16px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dark);
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--bg-deep);
+        }
+
+        .proc-table td {
+            padding: 8px 16px;
+            font-family: var(--mono);
+            font-size: 12px;
+            color: var(--text-dim);
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+        }
+
+        .proc-table tr:hover td {
+            background: var(--bg-hover);
+            color: var(--text);
+        }
+
+        .proc-table .pid { color: var(--accent-lit); width: 60px; }
+        .proc-table .cpu { width: 60px; }
+        .proc-table .mem { width: 60px; }
+
+        .proc-table .kill-btn {
+            background: none;
+            border: none;
+            color: var(--text-dark);
+            cursor: pointer;
+            font-family: var(--mono);
+            font-size: 11px;
+            padding: 2px 8px;
+        }
+
+        .proc-table .kill-btn:hover { color: var(--danger); }
+
+        /* Sessions */
+        .session-card {
+            background: var(--bg-card);
+            margin-bottom: 2px;
+        }
+
+        .session-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+
+        .session-header:hover { background: var(--bg-hover); }
+
+        .session-header__left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .session-status {
+            width: 6px;
+            height: 6px;
+        }
+
+        .session-status--running {
+            background: var(--accent-lit);
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        .session-status--exited {
+            background: var(--text-dark);
+        }
+
+        .session-name {
+            font-family: var(--mono);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .session-meta {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--text-dark);
+        }
+
+        .session-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .session-output {
+            display: none;
+            padding: 16px 20px;
+            background: var(--bg-deep);
+            font-family: var(--mono);
+            font-size: 11px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+            color: var(--text-dim);
+            border-top: 1px solid var(--bg-card);
+        }
+
+        .session-output--open { display: block; }
+
+        .run-panel {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 2px;
+        }
+
+        .run-panel__input {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: none;
+            color: var(--text);
+            font-family: var(--mono);
+            font-size: 12px;
+            outline: none;
+        }
+
+        .run-panel__input::placeholder { color: var(--text-dark); }
+        .run-panel__input:focus { background: var(--bg-hover); }
+
+        /* ═══ EMPTY STATE ═══ */
+        .empty {
+            padding: 40px;
+            text-align: center;
+            color: var(--text-dark);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: var(--bg-card);
+        }
+
+        /* ═══ SCROLLBAR ═══ */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: var(--text-dark); }
+
+        /* ═══ LANG TOGGLE ═══ */
+        .lang-toggle {
+            display: flex;
+            gap: 0;
+            margin-left: 16px;
+        }
+
+        .lang-toggle__btn {
+            padding: 5px 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border: 1px solid var(--text-dark);
+            background: transparent;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .lang-toggle__btn:first-child { border-right: none; }
+
+        .lang-toggle__btn--active {
+            background: var(--accent);
+            color: var(--accent-lit);
+            border-color: var(--accent);
+        }
+
+        /* ═══ CHARTS ═══ */
+        .charts {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            margin-top: 2px;
+        }
+
+        @media (max-width: 700px) {
+            .charts { grid-template-columns: 1fr; }
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            padding: 16px;
+            position: relative;
+        }
+
+        .chart-card__label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .chart-card canvas {
+            width: 100%;
+            height: 120px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app">
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header__left">
+            <div class="header__logo">▶</div>
+            <div class="header__title">ANBERNIC</div>
+        </div>
+        <div class="header__status">
+            <div class="header__dot"></div>
+            <span id="uptime">--</span>
+            <div class="lang-toggle">
+                <button class="lang-toggle__btn lang-toggle__btn--active" data-lang="en">EN</button>
+                <button class="lang-toggle__btn" data-lang="ru">RU</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- NAV -->
+    <nav class="nav">
+        <button class="nav__tab nav__tab--active" data-tab="system" data-i18n="tab_system">System</button>
+        <button class="nav__tab" data-tab="files" data-i18n="tab_files">Files</button>
+        <button class="nav__tab" data-tab="scripts" data-i18n="tab_scripts">Scripts</button>
+    </nav>
+
+    <!-- ══════ SYSTEM TAB ══════ -->
+    <div id="tab-system" class="tab-content tab-content--active">
+        <div class="grid">
+            <div class="card">
+                <div class="card__label" data-i18n="cpu_load">CPU Load</div>
+                <div class="card__value" id="cpu-val">--</div>
+                <div class="bar"><div class="bar__fill" id="cpu-bar" style="width:0%"></div></div>
+            </div>
+            <div class="card">
+                <div class="card__label" data-i18n="memory">Memory</div>
+                <div class="card__value" id="ram-val">--</div>
+                <div class="card__sub" id="ram-sub">-- / --</div>
+                <div class="bar"><div class="bar__fill" id="ram-bar" style="width:0%"></div></div>
+            </div>
+            <div class="card">
+                <div class="card__label" data-i18n="storage">Storage</div>
+                <div class="card__value" id="stor-val">--</div>
+                <div class="card__sub" id="stor-sub">-- / --</div>
+                <div class="bar"><div class="bar__fill" id="stor-bar" style="width:0%"></div></div>
+            </div>
+            <div class="card">
+                <div class="card__label" data-i18n="battery">Battery</div>
+                <div class="card__value" id="bat-val">--</div>
+                <div class="card__sub" id="bat-sub">--</div>
+                <div class="bar"><div class="bar__fill" id="bat-bar" style="width:0%"></div></div>
+            </div>
+        </div>
+        <div class="info-row">
+            <div class="info-cell">
+                <div class="info-cell__label">Hostname</div>
+                <div class="info-cell__value" id="net-host">--</div>
+            </div>
+            <div class="info-cell">
+                <div class="info-cell__label">IP</div>
+                <div class="info-cell__value" id="net-ip">--</div>
+            </div>
+            <div class="info-cell">
+                <div class="info-cell__label">Web</div>
+                <div class="info-cell__value" id="net-port">--</div>
+            </div>
+            <div class="info-cell">
+                <div class="info-cell__label">SSH</div>
+                <div class="info-cell__value" id="net-ssh">--</div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="section-label" style="margin-top: 16px" data-i18n="history">History</div>
+        <div class="charts">
+            <div class="chart-card">
+                <div class="chart-card__label">CPU %</div>
+                <canvas id="chart-cpu" width="440" height="120"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-card__label">RAM %</div>
+                <canvas id="chart-ram" width="440" height="120"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-card__label" data-i18n="battery">Battery</div>
+                <canvas id="chart-bat" width="440" height="120"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════ FILES TAB ══════ -->
+    <div id="tab-files" class="tab-content">
+        <div class="breadcrumb" id="breadcrumb"></div>
+
+        <div class="file-actions">
+            <button class="btn btn--accent" id="btn-upload-toggle" data-i18n="upload">↑ Upload</button>
+            <button class="btn btn--ghost" id="btn-refresh-files" data-i18n="refresh">↻ Refresh</button>
+        </div>
+
+        <div class="upload-area" id="upload-area">
+            <div class="upload-area__text" data-i18n="drop_file">Drop file here or click to select</div>
+            <input type="file" class="upload-area__input" id="upload-input">
+        </div>
+
+        <div class="file-viewer" id="file-viewer">
+            <div class="file-viewer__header">
+                <span class="file-viewer__name" id="viewer-name">--</span>
+                <button class="file-viewer__close" id="viewer-close">✕</button>
+            </div>
+            <pre class="file-viewer__content" id="viewer-content"></pre>
+        </div>
+
+        <div class="file-list" id="file-list"></div>
+    </div>
+
+    <!-- ══════ SCRIPTS TAB ══════ -->
+    <div id="tab-scripts" class="tab-content">
+        <!-- Run panel -->
+        <div class="run-panel">
+            <input class="run-panel__input" id="script-path" data-i18n-placeholder="script_placeholder" placeholder="path/to/script.py (relative to ~)">
+            <button class="btn btn--accent" id="btn-run-script" data-i18n="run">▶ Run</button>
+        </div>
+
+        <!-- Active sessions -->
+        <div class="section-label" data-i18n="active_sessions">Active Sessions</div>
+        <div id="sessions-list"></div>
+
+        <!-- Processes -->
+        <div class="section-label" style="margin-top: 16px" data-i18n="processes">Processes</div>
+        <div style="overflow-x: auto;">
+            <table class="proc-table">
+                <thead>
+                    <tr>
+                        <th>PID</th>
+                        <th>CPU%</th>
+                        <th>MEM%</th>
+                        <th data-i18n="command">Command</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="proc-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+// ═══ i18n ═══
+const translations = {
+    en: {
+        tab_system: 'System', tab_files: 'Files', tab_scripts: 'Scripts',
+        cpu_load: 'CPU Load', memory: 'Memory', storage: 'Storage', battery: 'Battery',
+        upload: '↑ Upload', refresh: '↻ Refresh',
+        drop_file: 'Drop file here or click to select',
+        script_placeholder: 'path/to/script.py (relative to ~)',
+        run: '▶ Run', active_sessions: 'Active Sessions', processes: 'Processes',
+        command: 'Command',
+        empty_dir: 'Empty directory', no_sessions: 'No active sessions',
+        error_loading: 'Error loading files', error_sessions: 'Error loading sessions',
+        delete_confirm: 'Delete', kill_confirm: 'Kill PID',
+        bat_charging: '⚡ Charging', bat_discharging: 'Discharging',
+        bat_full: 'Full', bat_idle: 'Idle', bat_unavail: 'Unavailable',
+        output: 'Output', kill: 'Kill', history: 'History',
+    },
+    ru: {
+        tab_system: 'Система', tab_files: 'Файлы', tab_scripts: 'Скрипты',
+        cpu_load: 'Нагрузка ЦП', memory: 'Память', storage: 'Хранилище', battery: 'Батарея',
+        upload: '↑ Загрузить', refresh: '↻ Обновить',
+        drop_file: 'Перетащите файл или нажмите для выбора',
+        script_placeholder: 'путь/к/скрипту.py (от ~)',
+        run: '▶ Запуск', active_sessions: 'Активные сессии', processes: 'Процессы',
+        command: 'Команда',
+        empty_dir: 'Пустая директория', no_sessions: 'Нет активных сессий',
+        error_loading: 'Ошибка загрузки файлов', error_sessions: 'Ошибка загрузки сессий',
+        delete_confirm: 'Удалить', kill_confirm: 'Убить PID',
+        bat_charging: '⚡ Заряжается', bat_discharging: 'Разряжается',
+        bat_full: 'Заряжен', bat_idle: 'Ожидание', bat_unavail: 'Недоступно',
+        output: 'Вывод', kill: 'Стоп', history: 'История',
+    }
+};
+
+let currentLang = localStorage.getItem('anbernic_lang') || 'en';
+
+function t(key) { return translations[currentLang][key] || translations.en[key] || key; }
+
+function applyLang() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        el.textContent = t(el.dataset.i18n);
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        el.placeholder = t(el.dataset.i18nPlaceholder);
+    });
+    document.querySelectorAll('.lang-toggle__btn').forEach(btn => {
+        btn.classList.toggle('lang-toggle__btn--active', btn.dataset.lang === currentLang);
+    });
+}
+
+document.querySelectorAll('.lang-toggle__btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        currentLang = btn.dataset.lang;
+        localStorage.setItem('anbernic_lang', currentLang);
+        applyLang();
+        // Re-render dynamic content
+        fetchStats();
+        const activeTab = document.querySelector('.nav__tab--active');
+        if (activeTab?.dataset.tab === 'files') loadFiles(currentPath);
+        if (activeTab?.dataset.tab === 'scripts') { loadSessions(); loadProcesses(); }
+    });
+});
+
+// ═══ TABS ═══
+document.querySelectorAll('.nav__tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.nav__tab').forEach(t => t.classList.remove('nav__tab--active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('tab-content--active'));
+        tab.classList.add('nav__tab--active');
+        document.getElementById('tab-' + tab.dataset.tab).classList.add('tab-content--active');
+
+        if (tab.dataset.tab === 'files') loadFiles(currentPath);
+        if (tab.dataset.tab === 'scripts') { loadSessions(); loadProcesses(); }
+    });
+});
+
+// ═══ SYSTEM TAB ═══
+async function fetchStats() {
+    try {
+        const r = await fetch('/api/stats');
+        const d = await r.json();
+
+        document.getElementById('cpu-val').textContent = d.cpu_percent + '%';
+        document.getElementById('cpu-bar').style.width = d.cpu_percent + '%';
+
+        document.getElementById('ram-val').textContent = d.memory.percent + '%';
+        document.getElementById('ram-sub').textContent = d.memory.used_mb + ' / ' + d.memory.total_mb + ' MB';
+        document.getElementById('ram-bar').style.width = d.memory.percent + '%';
+
+        document.getElementById('stor-val').textContent = d.storage.percent + '%';
+        document.getElementById('stor-sub').textContent = d.storage.used + ' / ' + d.storage.total;
+        document.getElementById('stor-bar').style.width = d.storage.percent + '%';
+
+        const bat = d.battery;
+        if (bat.percent >= 0) {
+            document.getElementById('bat-val').textContent = bat.percent + '%';
+            document.getElementById('bat-bar').style.width = bat.percent + '%';
+            const st = {CHARGING: t('bat_charging'), DISCHARGING: t('bat_discharging'), FULL: t('bat_full'), NOT_CHARGING: t('bat_idle')};
+            const temp = bat.temperature ? ' · ' + bat.temperature + '°C' : '';
+            document.getElementById('bat-sub').textContent = (st[bat.status] || bat.status) + temp;
+        } else {
+            document.getElementById('bat-val').textContent = 'N/A';
+            document.getElementById('bat-sub').textContent = t('bat_unavail');
+        }
+
+        document.getElementById('uptime').textContent = d.uptime;
+    } catch(e) { console.error(e); }
+}
+
+async function fetchNetwork() {
+    try {
+        const r = await fetch('/api/network');
+        const d = await r.json();
+        document.getElementById('net-host').textContent = d.hostname;
+        document.getElementById('net-ip').textContent = d.ip;
+        document.getElementById('net-port').textContent = ':' + d.port;
+        document.getElementById('net-ssh').textContent = ':' + d.ssh_port;
+    } catch(e) {}
+}
+
+// ═══ FILE MANAGER ═══
+let currentPath = '';
+
+function formatSize(bytes) {
+    if (bytes === 0) return '—';
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+    return (bytes/(1024*1024)).toFixed(1) + ' MB';
+}
+
+function formatDate(ts) {
+    if (!ts) return '';
+    const d = new Date(ts * 1000);
+    const pad = n => String(n).padStart(2, '0');
+    return pad(d.getDate()) + '.' + pad(d.getMonth()+1) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+
+function renderBreadcrumb(path) {
+    const bc = document.getElementById('breadcrumb');
+    bc.innerHTML = '';
+
+    const home = document.createElement('button');
+    home.className = 'breadcrumb__item' + (path === '' ? ' breadcrumb__item--active' : '');
+    home.textContent = '~';
+    home.onclick = () => loadFiles('');
+    bc.appendChild(home);
+
+    if (path) {
+        const parts = path.split('/');
+        let cumulative = '';
+        parts.forEach((part, i) => {
+            const sep = document.createElement('span');
+            sep.className = 'breadcrumb__sep';
+            sep.textContent = '/';
+            bc.appendChild(sep);
+
+            cumulative += (cumulative ? '/' : '') + part;
+            const btn = document.createElement('button');
+            btn.className = 'breadcrumb__item' + (i === parts.length - 1 ? ' breadcrumb__item--active' : '');
+            btn.textContent = part;
+            const p = cumulative;
+            btn.onclick = () => loadFiles(p);
+            bc.appendChild(btn);
+        });
+    }
+}
+
+async function loadFiles(path) {
+    currentPath = path;
+    renderBreadcrumb(path);
+
+    try {
+        const r = await fetch('/api/files?path=' + encodeURIComponent(path));
+        const d = await r.json();
+
+        if (d.error) {
+            document.getElementById('file-list').innerHTML = '<div class="empty">' + d.error + '</div>';
+            return;
+        }
+
+        const list = document.getElementById('file-list');
+        list.innerHTML = '';
+
+        if (d.parent !== null && d.parent !== undefined) {
+            const item = document.createElement('div');
+            item.className = 'file-item';
+            item.innerHTML = '<span class="file-item__icon">↩</span><span class="file-item__name file-item__name--dir">..</span>';
+            item.onclick = () => loadFiles(d.parent || '');
+            list.appendChild(item);
+        }
+
+        d.items.forEach(f => {
+            const item = document.createElement('div');
+            item.className = 'file-item';
+
+            const icon = f.is_dir ? '▸' : '·';
+            const nameClass = f.is_dir ? 'file-item__name file-item__name--dir' : 'file-item__name';
+
+            item.innerHTML = `
+                <span class="file-item__icon">${icon}</span>
+                <span class="${nameClass}">${f.name}</span>
+                <span class="file-item__size">${f.is_dir ? '' : formatSize(f.size)}</span>
+                <span class="file-item__date">${formatDate(f.modified)}</span>
+                <button class="file-item__del" title="Delete">✕</button>
+            `;
+
+            item.querySelector('.file-item__name').onclick = () => {
+                if (f.is_dir) loadFiles(f.path);
+                else viewFile(f.path, f.name);
+            };
+
+            item.querySelector('.file-item__del').onclick = (e) => {
+                e.stopPropagation();
+                if (confirm(t('delete_confirm') + ' ' + f.name + '?')) deleteFile(f.path);
+            };
+
+            list.appendChild(item);
+        });
+
+        if (d.items.length === 0) {
+            list.innerHTML = '<div class="empty">' + t('empty_dir') + '</div>';
+        }
+    } catch(e) {
+        document.getElementById('file-list').innerHTML = '<div class="empty">' + t('error_loading') + '</div>';
+    }
+}
+
+async function viewFile(path, name) {
+    try {
+        const r = await fetch('/api/files/read?path=' + encodeURIComponent(path));
+        const d = await r.json();
+
+        if (d.error) { alert(d.error); return; }
+
+        document.getElementById('viewer-name').textContent = name;
+        document.getElementById('viewer-content').textContent = d.content;
+        document.getElementById('file-viewer').classList.add('file-viewer--active');
+    } catch(e) { alert('Error reading file'); }
+}
+
+document.getElementById('viewer-close').onclick = () => {
+    document.getElementById('file-viewer').classList.remove('file-viewer--active');
+};
+
+async function deleteFile(path) {
+    try {
+        await fetch('/api/files?path=' + encodeURIComponent(path), { method: 'DELETE' });
+        loadFiles(currentPath);
+    } catch(e) { alert('Error deleting file'); }
+}
+
+// Upload
+const uploadToggle = document.getElementById('btn-upload-toggle');
+const uploadArea = document.getElementById('upload-area');
+const uploadInput = document.getElementById('upload-input');
+
+uploadToggle.onclick = () => uploadArea.classList.toggle('upload-area--active');
+uploadArea.onclick = () => uploadInput.click();
+
+uploadInput.onchange = async () => {
+    const file = uploadInput.files[0];
+    if (!file) return;
+
+    const form = new FormData();
+    form.append('file', file);
+    form.append('dir', currentPath);
+
+    try {
+        const r = await fetch('/api/files/upload', { method: 'POST', body: form });
+        const d = await r.json();
+        if (d.error) alert(d.error);
+        else loadFiles(currentPath);
+    } catch(e) { alert('Upload failed'); }
+
+    uploadInput.value = '';
+    uploadArea.classList.remove('upload-area--active');
+};
+
+document.getElementById('btn-refresh-files').onclick = () => loadFiles(currentPath);
+
+// ═══ SCRIPTS TAB ═══
+async function loadSessions() {
+    try {
+        const r = await fetch('/api/scripts/sessions');
+        const d = await r.json();
+        const list = document.getElementById('sessions-list');
+
+        if (!d.length) {
+            list.innerHTML = '<div class="empty">' + t('no_sessions') + '</div>';
+            return;
+        }
+
+        list.innerHTML = '';
+        d.forEach(s => {
+            const card = document.createElement('div');
+            card.className = 'session-card';
+
+            const isRunning = s.status === 'running';
+            const statusClass = isRunning ? 'session-status--running' : 'session-status--exited';
+
+            card.innerHTML = `
+                <div class="session-header">
+                    <div class="session-header__left">
+                        <div class="session-status ${statusClass}"></div>
+                        <span class="session-name">${s.name}</span>
+                        <span class="session-meta">PID ${s.pid} · ${s.duration}</span>
+                    </div>
+                    <div class="session-actions">
+                        <button class="btn btn--ghost btn-output" data-pid="${s.pid}">${t('output')}</button>
+                        ${isRunning ? `<button class="btn btn--danger btn-kill-session" data-pid="${s.pid}">${t('kill')}</button>` : ''}
+                    </div>
+                </div>
+                <pre class="session-output" id="output-${s.pid}"></pre>
+            `;
+
+            card.querySelector('.btn-output').onclick = async () => {
+                const out = card.querySelector('.session-output');
+                if (out.classList.contains('session-output--open')) {
+                    out.classList.remove('session-output--open');
+                    return;
+                }
+                const res = await fetch('/api/scripts/output?pid=' + s.pid);
+                const data = await res.json();
+                out.textContent = data.output || '(no output)';
+                out.classList.add('session-output--open');
+                out.scrollTop = out.scrollHeight;
+            };
+
+            const killBtn = card.querySelector('.btn-kill-session');
+            if (killBtn) {
+                killBtn.onclick = async () => {
+                    await fetch('/api/scripts/kill?pid=' + s.pid, { method: 'DELETE' });
+                    loadSessions();
+                };
+            }
+
+            list.appendChild(card);
+        });
+    } catch(e) {
+        document.getElementById('sessions-list').innerHTML = '<div class="empty">Error loading sessions</div>';
+    }
+}
+
+async function loadProcesses() {
+    try {
+        const r = await fetch('/api/processes');
+        const d = await r.json();
+        const body = document.getElementById('proc-body');
+        body.innerHTML = '';
+
+        d.forEach(p => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="pid">${p.pid}</td>
+                <td class="cpu">${p.cpu}</td>
+                <td class="mem">${p.mem}</td>
+                <td>${p.command}</td>
+                <td><button class="kill-btn" data-pid="${p.pid}">kill</button></td>
+            `;
+            tr.querySelector('.kill-btn').onclick = async () => {
+                if (confirm('Kill PID ' + p.pid + '?')) {
+                    await fetch('/api/processes?pid=' + p.pid, { method: 'DELETE' });
+                    loadProcesses();
+                }
+            };
+            body.appendChild(tr);
+        });
+    } catch(e) {}
+}
+
+// Run script
+document.getElementById('btn-run-script').onclick = async () => {
+    const path = document.getElementById('script-path').value.trim();
+    if (!path) return;
+
+    try {
+        const r = await fetch('/api/scripts/run', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ path })
+        });
+        const d = await r.json();
+        if (d.error) alert(d.error);
+        else {
+            document.getElementById('script-path').value = '';
+            loadSessions();
+        }
+    } catch(e) { alert('Error running script'); }
+};
+
+// ═══ INIT ═══
+applyLang();
+fetchStats();
+fetchNetwork();
+setInterval(fetchStats, 3000);
+setInterval(fetchNetwork, 30000);
+
+// Auto-refresh sessions when scripts tab is active
+setInterval(() => {
+    const active = document.querySelector('.nav__tab--active');
+    if (active && active.dataset.tab === 'scripts') {
+        loadSessions();
+        loadProcesses();
+    }
+}, 5000);
+
+// ═══ CHARTS ═══
+function drawChart(canvasId, dataPoints, color) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    const w = rect.width;
+    const h = rect.height;
+    const pad = { top: 4, right: 4, bottom: 16, left: 30 };
+    const cw = w - pad.left - pad.right;
+    const ch = h - pad.top - pad.bottom;
+
+    // Clear
+    ctx.clearRect(0, 0, w, h);
+
+    if (dataPoints.length < 2) {
+        ctx.fillStyle = '#505050';
+        ctx.font = '11px Montserrat';
+        ctx.textAlign = 'center';
+        ctx.fillText(t('history') + '...', w / 2, h / 2);
+        return;
+    }
+
+    // Grid lines
+    ctx.strokeStyle = '#303030';
+    ctx.lineWidth = 0.5;
+    for (let pct = 0; pct <= 100; pct += 25) {
+        const y = pad.top + ch - (pct / 100) * ch;
+        ctx.beginPath();
+        ctx.moveTo(pad.left, y);
+        ctx.lineTo(pad.left + cw, y);
+        ctx.stroke();
+
+        // Labels
+        ctx.fillStyle = '#505050';
+        ctx.font = '9px JetBrains Mono';
+        ctx.textAlign = 'right';
+        ctx.fillText(pct + '', pad.left - 4, y + 3);
+    }
+
+    // Time labels
+    if (dataPoints.length > 1) {
+        const first = dataPoints[0].ts;
+        const last = dataPoints[dataPoints.length - 1].ts;
+        const duration = last - first;
+        const pad2 = n => String(n).padStart(2, '0');
+
+        ctx.fillStyle = '#505050';
+        ctx.font = '9px JetBrains Mono';
+        ctx.textAlign = 'left';
+        const d1 = new Date(first * 1000);
+        ctx.fillText(pad2(d1.getHours()) + ':' + pad2(d1.getMinutes()), pad.left, h - 2);
+
+        ctx.textAlign = 'right';
+        const d2 = new Date(last * 1000);
+        ctx.fillText(pad2(d2.getHours()) + ':' + pad2(d2.getMinutes()), pad.left + cw, h - 2);
+    }
+
+    // Line
+    ctx.beginPath();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.lineJoin = 'round';
+
+    dataPoints.forEach((p, i) => {
+        const x = pad.left + (i / (dataPoints.length - 1)) * cw;
+        const y = pad.top + ch - (p.val / 100) * ch;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Fill under line
+    const lastX = pad.left + cw;
+    const baseY = pad.top + ch;
+    ctx.lineTo(lastX, baseY);
+    ctx.lineTo(pad.left, baseY);
+    ctx.closePath();
+    ctx.fillStyle = color.replace(')', ', 0.08)').replace('rgb', 'rgba');
+    ctx.fill();
+}
+
+async function fetchHistory() {
+    try {
+        const r = await fetch('/api/history');
+        const d = await r.json();
+
+        if (!d.length) return;
+
+        const cpuData = d.map(p => ({ ts: p.ts, val: p.cpu }));
+        const ramData = d.map(p => ({ ts: p.ts, val: p.ram }));
+        const batData = d.map(p => ({ ts: p.ts, val: Math.max(0, p.bat) }));
+
+        drawChart('chart-cpu', cpuData, 'rgb(205, 247, 213)');
+        drawChart('chart-ram', ramData, 'rgb(120, 200, 140)');
+        drawChart('chart-bat', batData, 'rgb(180, 230, 180)');
+    } catch(e) { console.error('History error:', e); }
+}
+
+fetchHistory();
+setInterval(fetchHistory, 10000);
+</script>
+
+</body>
+</html>
