@@ -2,7 +2,7 @@
   <img src="LOGO.png" alt="Anbernic Dashboard" width="100%">
 </p>
 
-# 🎮 Anbernic RG405V — Web Dashboard
+# Anbernic RG405V — Web морда
 
 Веб-панель мониторинга и управления Anbernic RG405V через Termux.
 Доступна по локальной сети с любого устройства через браузер.
