@@ -1,21 +1,21 @@
 <p align="center">
-  <img src="LOGO.png" alt="Anbernic Dashboard" width="200">
+  <img src="LOGO.png" alt="Anbernic Dashboard" width="100%">
 </p>
 
-# 🎮 Anbernic RG405V — Web Dashboard
+# Anbernic RG405V — Веб морда
 
-Веб-панель мониторинга и управления Anbernic RG405V через Termux.  
+Веб-панель мониторинга и управления Anbernic RG405V через Termux.
 Доступна по локальной сети с любого устройства через браузер.
 
 ## Возможности
 
-| Функция | Описание |
-|---------|----------|
-| **System Monitor** | CPU, RAM, Storage, Battery — live-данные + графики истории |
-| **File Manager** | Навигация, просмотр, удаление и загрузка файлов |
-| **Script Runner** | Запуск Python-скриптов в фоновых сессиях с просмотром вывода |
-| **Process Manager** | Список процессов, сортировка по CPU, kill |
-| **i18n** | Переключение между русским и английским |
+| Функция            | Описание                                                                                           |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **System Monitor**  | CPU, RAM, Storage, Battery — live-данные + графики истории                            |
+| **File Manager**    | Навигация, просмотр, удаление и загрузка файлов                    |
+| **Script Runner**   | Запуск Python-скриптов в фоновых сессиях с просмотром вывода |
+| **Process Manager** | Список процессов, сортировка по CPU, kill                                       |
+| **i18n**            | Переключение между русским и английским                                 |
 
 ## Стек
 
@@ -97,21 +97,21 @@ echo 'echo "Dashboard: http://$(hostname -I | cut -d\" \" -f1):8080"' >> ~/.bash
 
 ## API эндпоинты
 
-| Метод | Путь | Описание |
-|-------|------|----------|
-| `GET` | `/api/stats` | Системная статистика (CPU, RAM, Storage, Battery) |
-| `GET` | `/api/network` | Сетевая информация (hostname, IP, порты) |
-| `GET` | `/api/history` | История метрик (до 1 часа, точки каждые 10 сек) |
-| `GET` | `/api/files?path=` | Листинг директории |
-| `GET` | `/api/files/read?path=` | Чтение текстового файла (до 50 КБ) |
-| `DELETE` | `/api/files?path=` | Удаление файла |
-| `POST` | `/api/files/upload` | Загрузка файла (multipart/form-data) |
-| `GET` | `/api/processes` | Список процессов |
-| `DELETE` | `/api/processes?pid=` | Завершение процесса |
-| `POST` | `/api/scripts/run` | Запуск Python-скрипта `{"path": "..."}` |
-| `GET` | `/api/scripts/sessions` | Список активных сессий |
-| `GET` | `/api/scripts/output?pid=` | Вывод сессии (последние 200 строк) |
-| `DELETE` | `/api/scripts/kill?pid=` | Остановка сессии |
+| Метод | Путь                     | Описание                                                                 |
+| ---------- | ---------------------------- | -------------------------------------------------------------------------------- |
+| `GET`    | `/api/stats`               | Системная статистика (CPU, RAM, Storage, Battery)             |
+| `GET`    | `/api/network`             | Сетевая информация (hostname, IP, порты)                   |
+| `GET`    | `/api/history`             | История метрик (до 1 часа, точки каждые 10 сек) |
+| `GET`    | `/api/files?path=`         | Листинг директории                                              |
+| `GET`    | `/api/files/read?path=`    | Чтение текстового файла (до 50 КБ)                      |
+| `DELETE` | `/api/files?path=`         | Удаление файла                                                      |
+| `POST`   | `/api/files/upload`        | Загрузка файла (multipart/form-data)                                |
+| `GET`    | `/api/processes`           | Список процессов                                                  |
+| `DELETE` | `/api/processes?pid=`      | Завершение процесса                                            |
+| `POST`   | `/api/scripts/run`         | Запуск Python-скрипта `{"path": "..."}`                           |
+| `GET`    | `/api/scripts/sessions`    | Список активных сессий                                       |
+| `GET`    | `/api/scripts/output?pid=` | Вывод сессии (последние 200 строк)                      |
+| `DELETE` | `/api/scripts/kill?pid=`   | Остановка сессии                                                  |
 
 ## SSH-подключение с Mac
 
@@ -145,15 +145,15 @@ ssh anbernic
 
 Острый минимализм:
 
-| Элемент | Значение |
-|---------|----------|
-| Основной фон | `#1E1E1E` |
-| Карточки | `#282828` |
-| Акцент | `#2C3F2F` |
-| Акцент-текст | `#CDF7D5` |
-| Шрифт UI | Montserrat |
-| Шрифт моно | JetBrains Mono |
-| Border-radius | `0` (острые грани) |
+| Элемент          | Значение                |
+| ----------------------- | ------------------------------- |
+| Основной фон | `#1E1E1E`                     |
+| Карточки        | `#282828`                     |
+| Акцент            | `#2C3F2F`                     |
+| Акцент-текст | `#CDF7D5`                     |
+| Шрифт UI           | Montserrat                      |
+| Шрифт моно     | JetBrains Mono                  |
+| Border-radius           | `0` (острые грани) |
 
 ## Лицензия
 
